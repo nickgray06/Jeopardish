@@ -1,0 +1,16 @@
+h1 {
+  text-align: center;
+}
+
+section {
+  display: flex;
+  border: 1px solid red;
+  width: 50%;
+  margin: auto;
+  text-align: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: blue;
+  box-shadow: 3px 3px 3px blue;
+  color: yellow;
+}
