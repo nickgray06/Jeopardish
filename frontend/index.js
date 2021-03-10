@@ -24,6 +24,7 @@ const categoryURL = `${apiURL}/categories`
 const section = document.querySelector('#question-info')
 let thisClue
 const button = document.getElementById('submit-button')
+const modalText = document.getElementById('modal-text')
 
 
 
@@ -61,17 +62,72 @@ fetch(categoryURL)
     return response.json()
   }
 
+  let displayResults
+
   function submitAnswer(event){
     console.log(answerInput.value)
+    let userAnswer = cleanAnswer(answerInput.value)
+    let correctAnswer = cleanAnswer(thisClue.answer)
     
-    if (thisClue.answer === answerInput.value) {
-      console.log('coorect')
+    
+    if (correctAnswer === userAnswer) {
+      displayResults = document.createElement('p')
+      displayResults.innerText = "Good for you, thats right!"
+      modalText.append(displayResults)
     } else {
-      console.log('nahhhh brahhh')
+      displayResults = document.createElement('p')
+      let displayAnswer = thisClue.answer
+      displayAnswer = displayAnswer.replace("<i>", "")
+      displayAnswer = displayAnswer.replace("</i>", "")
+      displayResults.innerText = `Sorry, no. The correct answer was ${displayAnswer}.`
+      modalText.append(displayResults)
     }
     event.preventDefault()
 
   }
 
   const answerInput = document.getElementById('answer-in')
+
   button.addEventListener('submit', submitAnswer)
+
+  function cleanAnswer(answer) {
+    let niceAnswer = answer.toLowerCase()
+    niceAnswer = niceAnswer.replace("<i>", "")
+    niceAnswer = niceAnswer.replace("</i>", "")
+    niceAnswer = niceAnswer.replace(/ /g, "")
+    niceAnswer = niceAnswer.replace(/^a /, "")
+    niceAnswer = niceAnswer.replace(/^an /, "")
+    niceAnswer = niceAnswer.replace("the", "")
+    console.log(niceAnswer)
+
+    return niceAnswer.trim()
+  }
+
+  // Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+button.onsubmit = function() {
+  modal.style.display = "block";
+}
+
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+  location.reload()
+}
+
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display =  "none";
+    location.reload()
+  }
+}
+
+
