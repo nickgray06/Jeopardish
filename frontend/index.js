@@ -1,22 +1,5 @@
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
 
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
-}
-
+//set up html elements
 const answer = new URLSearchParams(window.location.search).get('answer')
 const apiURL = "http://localhost:3000"
 const cluesURL = `${apiURL}/clues`
@@ -25,7 +8,7 @@ const section = document.querySelector('#question-info')
 let thisClue
 const button = document.getElementById('submit-button')
 const modalText = document.getElementById('modal-text')
-
+const answerInput = document.getElementById('answer-in')
 
 
 fetch(categoryURL)
@@ -39,11 +22,8 @@ fetch(categoryURL)
 
   function createClueCard(thisClue) {
     const div = document.createElement('h3')
-    console.log(div)
     div.innerText = thisClue.question
-    console.log(div)
     section.append(div)
-    console.log(section)
   }
 
   function getClue(object){
@@ -73,23 +53,23 @@ fetch(categoryURL)
     if (correctAnswer === userAnswer) {
       displayResults = document.createElement('p')
       displayResults.innerText = "Good for you, thats right!"
-      modalText.append(displayResults)
+      modalText.replaceChildren(displayResults)
     } else {
       displayResults = document.createElement('p')
       let displayAnswer = thisClue.answer
       displayAnswer = displayAnswer.replace("<i>", "")
       displayAnswer = displayAnswer.replace("</i>", "")
       displayResults.innerText = `Sorry, no. The correct answer was ${displayAnswer}.`
-      modalText.append(displayResults)
+      modalText.replaceChildren(displayResults)
     }
     event.preventDefault()
-
   }
 
-  const answerInput = document.getElementById('answer-in')
+
 
   button.addEventListener('submit', submitAnswer)
 
+  //cleans corect answer and user answer
   function cleanAnswer(answer) {
     let niceAnswer = answer.toLowerCase()
     niceAnswer = niceAnswer.replace("<i>", "")
@@ -103,7 +83,8 @@ fetch(categoryURL)
     return niceAnswer.trim()
   }
 
-  // Get the modal
+
+// Get the modal
 var modal = document.getElementById("myModal");
 
 // Get the <span> element that closes the modal
@@ -114,20 +95,39 @@ button.onsubmit = function() {
   modal.style.display = "block";
 }
 
-
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
   modal.style.display = "none";
-  location.reload()
+  button.reset()
+  // location.reload()
 }
-
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
   if (event.target == modal) {
     modal.style.display =  "none";
-    location.reload()
+    // location.reload()
   }
 }
 
+
+//UTILITIES
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
 
