@@ -7,12 +7,17 @@
   <script src="index.js" defer></script>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="favicon.ico"/>
-  <title>Jeopardish</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+  <title>JEOPARDISH!</title>
 </head>
 <body>
+  
   <header>
-    <h1>JEOPARD(ISH)!</h1>
-    <span id="score">SCORE: <span id='score-number'></span>
+    <h1 class='animate__animated animate__rollIn animate__delay-1s' ><span id='letter-j'>J</span>EOPARD(ISH)!</h1>
+    <span id="score">WINNINGS: <span id='score-number'></span>
   </span>
   </header>
 
@@ -21,16 +26,20 @@
     </div>
   </div>
 
-  <section class="modal-card">
-    <div class=modal-content>
+  <section id='modal-card' class ='animate__animated animate__zoomIn'>
+    <div class='modal-content'>
       <div class="question-info"></div>
       <form class="submit-button" autocomplete="off">
-        <input id="answer-in" type="text" placeholder="Your answer here:"><button type="submit" >Submit Answer</button>
+        <input id="answer-in" type="text" placeholder="What is..."><button type="submit" >Submit Answer</button>
       </form>
       <div class="modal-result"></div>
   </div>
   </section>
 
+  <section id='music'>
+    <embed id ='music-controls' src="/music.mp3" autostart="true" loop="true">
+    <!-- <audio controls audio.volume="0.0" src='music.mp3' autostart="true" id='music-controls'> -->
+  </section>
 
   </div>
   
