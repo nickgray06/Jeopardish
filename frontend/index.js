@@ -23,9 +23,6 @@ let clickedClue
 let displayResults = document.createElement('p')
 let displayQuestion
 
-let audio = document.querySelector('#music-controls')
-audio.volume=0.1
-
 modal.style.display = "none"
 
 const gameInit = () => {
@@ -158,7 +155,7 @@ const gameInit = () => {
     }, 2500)
   }
 
-  //cleans corect answer and user answer
+  //cleans correct answer and user answer
   function cleanAnswer(answer) {
     let niceAnswer = answer.toLowerCase()
     niceAnswer = niceAnswer.replaceAll("<i>", "")
