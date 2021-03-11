@@ -4,23 +4,28 @@ const answer = new URLSearchParams(window.location.search).get('answer')
 const apiURL = "http://localhost:3000"
 const cluesURL = `${apiURL}/clues`
 const categoryURL = `${apiURL}/categories`
-const section = document.querySelector('#question-info')
+// const section = document.querySelector('#question-info')
 let thisClue
-const button = document.querySelector('.submit-button')
+const submitButton = document.querySelector('.submit-button')
 const modalQuestion = document.querySelector('.question-info')
 const modalResult = document.querySelector('.modal-result')
 const answerInput = document.querySelector('#answer-in')
 const modal = document.querySelector(".modal-card");
 const categoryIds = [1,2,3,4,5,6]
-let thisCategory
+let categoryCounter = 0
 let clueArray = []
+let allClues = []
+let clueIdCount = 1
 const board = document.querySelector('#board')
 const scoreDiv = document.querySelector('#score-number')
 const putScore = document.createElement('p')
 const currentScore = 0
+let clickedClue
+let displayResults = document.createElement('p')
+let displayQuestion
 
 
-modal.style.display = "none"
+// modal.style.display = "none"
 
 const gameInit = () => {
   categoryIds.forEach(category => {
@@ -30,25 +35,12 @@ const gameInit = () => {
       .then(buildBoard)
 
   })
+  board.addEventListener("click", clueClicked)
+
 }
-
-// fetch(categoryURL)
-//   .then(parseJSON)
-//   .then(catArray)
-//   .then(console.log)
-//   .then(categories =>fetch(categoryURL + `/${pickCategory(categories)}`))
-//   .then(parseJSON)
-//   .then(getClue)
-//   .then(getClue => thisClue = getClue)
-//   .then(createClueCard)
-//   .then(() => console.log(thisClue))
-
-
-  // function createClueCard(thisClue) {
-  //   const div = document.createElement('h3')
-  //   div.innerText = thisClue.question
-  //   modalQuestion.append(div)
-  // }
+  function parseJSON(response) {
+    return response.json()
+  }
 
   function getCluesAndCategory(category){
     let someClues = []
@@ -58,6 +50,17 @@ const gameInit = () => {
     } )
     shuffle(someClues)
     clueArray.push(someClues[0], someClues[1],someClues[2],someClues[3],someClues[4])
+    someClues[0].id = clueIdCount
+    clueIdCount += 1
+    someClues[1].id = clueIdCount
+    clueIdCount += 1
+    someClues[2].id = clueIdCount
+    clueIdCount += 1
+    someClues[3].id = clueIdCount
+    clueIdCount += 1
+    someClues[4].id = clueIdCount
+    clueIdCount += 1
+    allClues.push(someClues[0], someClues[1],someClues[2],someClues[3],someClues[4])
     let valueCounter = 200
     clueArray.forEach(clue => {
       clue.value = valueCounter
@@ -80,8 +83,8 @@ const gameInit = () => {
     clueArray.forEach(clue => {
       let clueCard = document.createElement('div')
       clueCard.className = 'clue-card'
-      let currentClue = document.createElement('p')
-      currentClue.textContent = `$${clue.value}` 
+      let currentClue = document.createElement('div')
+      currentClue.innerHTML = `<button id="${clue.id}">$${clue.value}</button>` 
       clueCard.append(currentClue)
       column.append(clueCard)
     })
@@ -91,46 +94,70 @@ const gameInit = () => {
     
   }
 
-
-  // function pickCategory(categories){
-  //   return shuffle(categories)[0].id
-  // }
-
-  function parseJSON(response) {
-    return response.json()
+  function clueClicked(event){
+    let clickedClueId = event.target.id 
+    clickedClue = allClues[clickedClueId - 1]
+  
+    if (clickedClueId) {
+      event.target.style.display = "none"
+      putQuestion()
+    }
   }
 
-  let displayResults
+  function putQuestion() {
+
+    modal.style.display = "block"
+    displayQuestion = document.createElement('p')
+    modalQuestion.style.display = "block"
+    submitButton.style.display = "block"
+    submitButton.reset ()
+    displayQuestion.textContent = clickedClue.question
+    modalQuestion.replaceChildren(displayQuestion)
+    modalResult.replaceChildren(displayResults)
+    displayResults.innerText = ""
+    modalResult.replaceChildren(displayResults)
+    submitButton.addEventListener('submit', submitAnswer)
+
+  }
+
+
+  
 
   function submitAnswer(event){
+    event.preventDefault()
     modalQuestion.style.display = "none"
-    button.style.display = "none"
+    submitButton.style.display = "none"
+    console.log(answerInput)
     let userAnswer = cleanAnswer(answerInput.value)
-    let correctAnswer = cleanAnswer(thisClue.answer)
+    let correctAnswer = cleanAnswer(clickedClue.answer)
     
     
     if (correctAnswer === userAnswer) {
-      displayResults = document.createElement('p')
+      
       displayResults.innerText = "Good for you, thats right!"
       modalResult.replaceChildren(displayResults)
     } else {
-      displayResults = document.createElement('p')
-      let displayAnswer = thisClue.answer
+      // displayResults = document.createElement('p')
+      let displayAnswer = clickedClue.answer
+      let wrongString = document.createElement('p')
+      let displayAnswerString = document.createElement('h6')
       displayAnswer = displayAnswer.replace("<i>", "")
       displayAnswer = displayAnswer.replace("</i>", "")
-      displayResults.innerText = `Sorry, no. The correct answer was ${displayAnswer}.`
+      wrongString.innerText = "Sorry, no. The correct answer was:"
+      displayAnswerString.textContent = displayAnswer
+      displayResults.append(wrongString, displayAnswerString)
       modalResult.replaceChildren(displayResults)
     }
     
     setTimeout(() => {
-      console.log(modal)
       modal.style.display = "none"
-    }, 2500)
+    }, 3500)
 
-    event.preventDefault()
+
+
   }
 
-  button.addEventListener('submit', submitAnswer)
+  
 
   //cleans corect answer and user answer
   function cleanAnswer(answer) {
@@ -148,10 +175,10 @@ const gameInit = () => {
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
 
-// When the user clicks the button, open the modal 
-button.onsubmit = function() {
-  modal.style.display = "block";
-}
+// // When the user clicks the button, open the modal 
+// submitButton.onsubmit = function() {
+//   modal.style.display = "block";
+// }
 
 
 gameInit()

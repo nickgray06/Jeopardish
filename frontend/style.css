@@ -77,10 +77,10 @@ header {
 
 h1 {
   /* text-align: center; */
-  padding-left: 6em;
-  font-size: 64px;
+  padding-left: 3.2em;
+  font-size: 88px;
   color: rgb(240, 237, 237);
-  text-shadow: 0px 2px 2px white;
+  text-shadow: 0px px 0px rgb(148, 148, 148);
   font-weight: 900;
   font-family: 'Sigmar One';
 }
@@ -101,7 +101,7 @@ section {
 
 /* The Modal (background) */
 .modal {
-  display: none; /* Hidden by default */
+  /* display: none; Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
   padding-top: 100px; /* Location of the box */
@@ -170,9 +170,32 @@ section {
   text-shadow: 4px 4px 0px rgb(2, 2, 30)
 }
 
+.clue-card button {
+  height: 100%;
+  border: 0;
+  color: inherit;
+  background: none;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(7, 7, 211);
+  color: rgb(252, 218, 24);
+  font-size: 48px;
+  font-weight: 600;
+  height: 100px;
+  text-shadow: 4px 4px 0px rgb(2, 2, 30)
+}
+
 
 
 .column {
   width: 16.6667%;
+}
+
+.button-used {
+  display: none;
 
 }
