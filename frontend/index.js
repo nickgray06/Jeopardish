@@ -6,37 +6,95 @@ const cluesURL = `${apiURL}/clues`
 const categoryURL = `${apiURL}/categories`
 const section = document.querySelector('#question-info')
 let thisClue
-const button = document.getElementById('submit-button')
-const modalText = document.getElementById('modal-text')
-const answerInput = document.getElementById('answer-in')
+const button = document.querySelector('.submit-button')
+const modalQuestion = document.querySelector('.question-info')
+const modalResult = document.querySelector('.modal-result')
+const answerInput = document.querySelector('#answer-in')
+const modal = document.querySelector(".modal-card");
+const categoryIds = [1,2,3,4,5,6]
+let thisCategory
+let clueArray = []
+const board = document.querySelector('#board')
+const scoreDiv = document.querySelector('#score-number')
+const putScore = document.createElement('p')
+const currentScore = 0
 
 
-fetch(categoryURL)
-  .then(parseJSON)
-  .then(categories =>fetch(categoryURL + `/${pickCategory(categories)}`))
-  .then(parseJSON)
-  .then(getClue)
-  .then(getClue => thisClue = getClue)
-  .then(createClueCard)
-  .then(() => console.log(thisClue))
+modal.style.display = "none"
 
-  function createClueCard(thisClue) {
-    const div = document.createElement('h3')
-    div.innerText = thisClue.question
-    section.append(div)
-  }
+const gameInit = () => {
+  categoryIds.forEach(category => {
+    fetch(categoryURL + `/${category}`)
+      .then(parseJSON)
+      .then(getCluesAndCategory)
+      .then(buildBoard)
 
-  function getClue(object){
-    const clueArray = []
-    object.clues.forEach(clue => {
-      clueArray.push(clue)
+  })
+}
+
+// fetch(categoryURL)
+//   .then(parseJSON)
+//   .then(catArray)
+//   .then(console.log)
+//   .then(categories =>fetch(categoryURL + `/${pickCategory(categories)}`))
+//   .then(parseJSON)
+//   .then(getClue)
+//   .then(getClue => thisClue = getClue)
+//   .then(createClueCard)
+//   .then(() => console.log(thisClue))
+
+
+  // function createClueCard(thisClue) {
+  //   const div = document.createElement('h3')
+  //   div.innerText = thisClue.question
+  //   modalQuestion.append(div)
+  // }
+
+  function getCluesAndCategory(category){
+    let someClues = []
+    clueArray = []
+    category.clues.forEach(clue => {
+      someClues.push(clue)
     } )
-    return shuffle(clueArray)[0]
+    shuffle(someClues)
+    clueArray.push(someClues[0], someClues[1],someClues[2],someClues[3],someClues[4])
+    let valueCounter = 200
+    clueArray.forEach(clue => {
+      clue.value = valueCounter
+      valueCounter += 200
+    })
+    thisCategory = category.title
+    return clueArray
   }
 
-  function pickCategory(categories){
-    return shuffle(categories)[0].id
+  function buildBoard() {
+    let column = document.createElement('div')
+    column.className = 'column'
+    let catCard = document.createElement('div')
+    catCard.className = 'category-card'
+    let catName = document.createElement('p')
+    catName.textContent = thisCategory.toUpperCase()
+    catCard.append(catName)
+    column.append(catCard)
+    
+    clueArray.forEach(clue => {
+      let clueCard = document.createElement('div')
+      clueCard.className = 'clue-card'
+      let currentClue = document.createElement('p')
+      currentClue.textContent = `$${clue.value}` 
+      clueCard.append(currentClue)
+      column.append(clueCard)
+    })
+    board.append(column)
+    putScore.textContent = currentScore
+    scoreDiv.append(putScore)
+    
   }
+
+
+  // function pickCategory(categories){
+  //   return shuffle(categories)[0].id
+  // }
 
   function parseJSON(response) {
     return response.json()
@@ -45,7 +103,8 @@ fetch(categoryURL)
   let displayResults
 
   function submitAnswer(event){
-    console.log(answerInput.value)
+    modalQuestion.style.display = "none"
+    button.style.display = "none"
     let userAnswer = cleanAnswer(answerInput.value)
     let correctAnswer = cleanAnswer(thisClue.answer)
     
@@ -53,19 +112,23 @@ fetch(categoryURL)
     if (correctAnswer === userAnswer) {
       displayResults = document.createElement('p')
       displayResults.innerText = "Good for you, thats right!"
-      modalText.replaceChildren(displayResults)
+      modalResult.replaceChildren(displayResults)
     } else {
       displayResults = document.createElement('p')
       let displayAnswer = thisClue.answer
       displayAnswer = displayAnswer.replace("<i>", "")
       displayAnswer = displayAnswer.replace("</i>", "")
       displayResults.innerText = `Sorry, no. The correct answer was ${displayAnswer}.`
-      modalText.replaceChildren(displayResults)
+      modalResult.replaceChildren(displayResults)
     }
+    
+    setTimeout(() => {
+      console.log(modal)
+      modal.style.display = "none"
+    }, 2500)
+
     event.preventDefault()
   }
-
-
 
   button.addEventListener('submit', submitAnswer)
 
@@ -75,17 +138,12 @@ fetch(categoryURL)
     niceAnswer = niceAnswer.replace("<i>", "")
     niceAnswer = niceAnswer.replace("</i>", "")
     niceAnswer = niceAnswer.replace(/ /g, "")
-    niceAnswer = niceAnswer.replace(/^a /, "")
-    niceAnswer = niceAnswer.replace(/^an /, "")
+    niceAnswer = niceAnswer.replace("a", "")
+    niceAnswer = niceAnswer.replace("an", "")
     niceAnswer = niceAnswer.replace("the", "")
-    console.log(niceAnswer)
 
     return niceAnswer.trim()
   }
-
-
-// Get the modal
-var modal = document.getElementById("myModal");
 
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
@@ -95,20 +153,8 @@ button.onsubmit = function() {
   modal.style.display = "block";
 }
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-  button.reset()
-  // location.reload()
-}
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display =  "none";
-    // location.reload()
-  }
-}
+gameInit()
 
 
 //UTILITIES
