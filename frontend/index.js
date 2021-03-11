@@ -4,70 +4,160 @@ const answer = new URLSearchParams(window.location.search).get('answer')
 const apiURL = "http://localhost:3000"
 const cluesURL = `${apiURL}/clues`
 const categoryURL = `${apiURL}/categories`
-const section = document.querySelector('#question-info')
+// const section = document.querySelector('#question-info')
 let thisClue
-const button = document.getElementById('submit-button')
-const modalText = document.getElementById('modal-text')
-const answerInput = document.getElementById('answer-in')
+const submitButton = document.querySelector('.submit-button')
+const modalQuestion = document.querySelector('.question-info')
+const modalResult = document.querySelector('.modal-result')
+const answerInput = document.querySelector('#answer-in')
+const modal = document.querySelector(".modal-card");
+const categoryIds = [1,2,3,4,5,6]
+let categoryCounter = 0
+let clueArray = []
+let allClues = []
+let clueIdCount = 1
+const board = document.querySelector('#board')
+const scoreDiv = document.querySelector('#score-number')
+const putScore = document.createElement('p')
+const currentScore = 0
+let clickedClue
+let displayResults = document.createElement('p')
+let displayQuestion
 
 
-fetch(categoryURL)
-  .then(parseJSON)
-  .then(categories =>fetch(categoryURL + `/${pickCategory(categories)}`))
-  .then(parseJSON)
-  .then(getClue)
-  .then(getClue => thisClue = getClue)
-  .then(createClueCard)
-  .then(() => console.log(thisClue))
+// modal.style.display = "none"
 
-  function createClueCard(thisClue) {
-    const div = document.createElement('h3')
-    div.innerText = thisClue.question
-    section.append(div)
-  }
+const gameInit = () => {
+  categoryIds.forEach(category => {
+    fetch(categoryURL + `/${category}`)
+      .then(parseJSON)
+      .then(getCluesAndCategory)
+      .then(buildBoard)
 
-  function getClue(object){
-    const clueArray = []
-    object.clues.forEach(clue => {
-      clueArray.push(clue)
-    } )
-    return shuffle(clueArray)[0]
-  }
+  })
+  board.addEventListener("click", clueClicked)
 
-  function pickCategory(categories){
-    return shuffle(categories)[0].id
-  }
-
+}
   function parseJSON(response) {
     return response.json()
   }
 
-  let displayResults
+  function getCluesAndCategory(category){
+    let someClues = []
+    clueArray = []
+    category.clues.forEach(clue => {
+      someClues.push(clue)
+    } )
+    shuffle(someClues)
+    clueArray.push(someClues[0], someClues[1],someClues[2],someClues[3],someClues[4])
+    someClues[0].id = clueIdCount
+    clueIdCount += 1
+    someClues[1].id = clueIdCount
+    clueIdCount += 1
+    someClues[2].id = clueIdCount
+    clueIdCount += 1
+    someClues[3].id = clueIdCount
+    clueIdCount += 1
+    someClues[4].id = clueIdCount
+    clueIdCount += 1
+    allClues.push(someClues[0], someClues[1],someClues[2],someClues[3],someClues[4])
+    let valueCounter = 200
+    clueArray.forEach(clue => {
+      clue.value = valueCounter
+      valueCounter += 200
+    })
+    thisCategory = category.title
+    return clueArray
+  }
 
-  function submitAnswer(event){
-    console.log(answerInput.value)
-    let userAnswer = cleanAnswer(answerInput.value)
-    let correctAnswer = cleanAnswer(thisClue.answer)
+  function buildBoard() {
+    let column = document.createElement('div')
+    column.className = 'column'
+    let catCard = document.createElement('div')
+    catCard.className = 'category-card'
+    let catName = document.createElement('p')
+    catName.textContent = thisCategory.toUpperCase()
+    catCard.append(catName)
+    column.append(catCard)
     
+    clueArray.forEach(clue => {
+      let clueCard = document.createElement('div')
+      clueCard.className = 'clue-card'
+      let currentClue = document.createElement('div')
+      currentClue.innerHTML = `<button id="${clue.id}">$${clue.value}</button>` 
+      clueCard.append(currentClue)
+      column.append(clueCard)
+    })
+    board.append(column)
+    putScore.textContent = currentScore
+    scoreDiv.append(putScore)
     
-    if (correctAnswer === userAnswer) {
-      displayResults = document.createElement('p')
-      displayResults.innerText = "Good for you, thats right!"
-      modalText.replaceChildren(displayResults)
-    } else {
-      displayResults = document.createElement('p')
-      let displayAnswer = thisClue.answer
-      displayAnswer = displayAnswer.replace("<i>", "")
-      displayAnswer = displayAnswer.replace("</i>", "")
-      displayResults.innerText = `Sorry, no. The correct answer was ${displayAnswer}.`
-      modalText.replaceChildren(displayResults)
+  }
+
+  function clueClicked(event){
+    let clickedClueId = event.target.id 
+    clickedClue = allClues[clickedClueId - 1]
+  
+    if (clickedClueId) {
+      event.target.style.display = "none"
+      putQuestion()
     }
-    event.preventDefault()
+  }
+
+  function putQuestion() {
+
+    modal.style.display = "block"
+    displayQuestion = document.createElement('p')
+    modalQuestion.style.display = "block"
+    submitButton.style.display = "block"
+    submitButton.reset ()
+    displayQuestion.textContent = clickedClue.question
+    modalQuestion.replaceChildren(displayQuestion)
+    modalResult.replaceChildren(displayResults)
+    displayResults.innerText = ""
+    modalResult.replaceChildren(displayResults)
+    submitButton.addEventListener('submit', submitAnswer)
+
   }
 
 
+  
 
-  button.addEventListener('submit', submitAnswer)
+  function submitAnswer(event){
+    event.preventDefault()
+    modalQuestion.style.display = "none"
+    submitButton.style.display = "none"
+    console.log(answerInput)
+    let userAnswer = cleanAnswer(answerInput.value)
+    let correctAnswer = cleanAnswer(clickedClue.answer)
+    
+    
+    if (correctAnswer === userAnswer) {
+      
+      displayResults.innerText = "Good for you, thats right!"
+      modalResult.replaceChildren(displayResults)
+    } else {
+      // displayResults = document.createElement('p')
+      let displayAnswer = clickedClue.answer
+      let wrongString = document.createElement('p')
+      let displayAnswerString = document.createElement('h6')
+      displayAnswer = displayAnswer.replace("<i>", "")
+      displayAnswer = displayAnswer.replace("</i>", "")
+      wrongString.innerText = "Sorry, no. The correct answer was:"
+      displayAnswerString.textContent = displayAnswer
+      displayResults.append(wrongString, displayAnswerString)
+      modalResult.replaceChildren(displayResults)
+    }
+    
+    setTimeout(() => {
+      modal.style.display = "none"
+    }, 3500)
+
+
+
+  }
+
+  
 
   //cleans corect answer and user answer
   function cleanAnswer(answer) {
@@ -75,40 +165,23 @@ fetch(categoryURL)
     niceAnswer = niceAnswer.replace("<i>", "")
     niceAnswer = niceAnswer.replace("</i>", "")
     niceAnswer = niceAnswer.replace(/ /g, "")
-    niceAnswer = niceAnswer.replace(/^a /, "")
-    niceAnswer = niceAnswer.replace(/^an /, "")
+    niceAnswer = niceAnswer.replace("a", "")
+    niceAnswer = niceAnswer.replace("an", "")
     niceAnswer = niceAnswer.replace("the", "")
-    console.log(niceAnswer)
 
     return niceAnswer.trim()
   }
 
-
-// Get the modal
-var modal = document.getElementById("myModal");
-
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
 
-// When the user clicks the button, open the modal 
-button.onsubmit = function() {
-  modal.style.display = "block";
-}
+// // When the user clicks the button, open the modal 
+// submitButton.onsubmit = function() {
+//   modal.style.display = "block";
+// }
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-  button.reset()
-  // location.reload()
-}
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display =  "none";
-    // location.reload()
-  }
-}
+gameInit()
 
 
 //UTILITIES

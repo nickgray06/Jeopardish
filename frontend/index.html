@@ -10,21 +10,27 @@
   <title>Jeopardish</title>
 </head>
 <body>
-  <h1>Jeopardish</h1>
-  <section id="card">
-    <div id="question-info"></div>
-    <form id="submit-button">
-      <input id="answer-in" type="text" placeholder="Your answer here:"><button type="submit" >Submit Answer</button>
-    </form>
-  </section>
-  <!-- The Modal -->
-  <div id="myModal" class="modal">
+  <header>
+    <h1>JEOPARD(ISH)!</h1>
+    <span id="score">SCORE: <span id='score-number'></span>
+  </span>
+  </header>
 
-  <!-- Modal content -->
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <div id="modal-text"></div>
+  <div id='board'>
+
     </div>
+  </div>
+
+  <section class="modal-card">
+    <div class=modal-content>
+      <div class="question-info"></div>
+      <form class="submit-button" autocomplete="off">
+        <input id="answer-in" type="text" placeholder="Your answer here:"><button type="submit" >Submit Answer</button>
+      </form>
+      <div class="modal-result"></div>
+  </div>
+  </section>
+
 
   </div>
   
