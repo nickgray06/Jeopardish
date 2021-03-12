@@ -77,7 +77,6 @@ header {
 }
 
 h1 {
-  /* text-align: center; */
   padding-left: 4.1em;
   font-size: 72px;
   color: rgb(240, 237, 237);
@@ -90,25 +89,7 @@ h1 {
   font-size: 150px;
 }
 
-
-/* section {
-  display: flex;
-  border: 1px solid black;
-  width: 50%;
-  margin: auto;
-  text-align: center;
-  justify-content: center;
-  flex-direction: column;
-  background-color: blue;
-  box-shadow: 3px 3px 3px blue;
-  color: rgb(252, 218, 24);
-} */
-
-
 #modal-card {
-
-  /* opacity: 0; */
-  /* transition: opacity 2s; */
   left: 0;
   top: 0;
   right: 0;
@@ -131,9 +112,8 @@ h1 {
   margin: auto;
   padding: 20px;
   width: 80%;
-  height: 1200px;
+  height: 600px;
   background:  rgb(7, 7, 211);
-  
 }
 
 
@@ -187,8 +167,6 @@ h1 {
   height: 100px;
   text-shadow: 4px 4px 0px rgb(2, 2, 30);
 }
-
-
 
 .column {
   width: 16.6667%;

@@ -23,8 +23,11 @@ let clickedClue
 let displayResults = document.createElement('p')
 let displayQuestion
 
+//set modal to hidden
 modal.style.display = "none"
 
+
+//start a new game, fetch call to api
 const gameInit = () => {
   categoryIds.forEach(category => {
     fetch(categoryURL + `/${category}`)
@@ -32,13 +35,16 @@ const gameInit = () => {
       .then(getCluesAndCategory)
       .then(buildBoard)
   })
+  //event listener for when a clue is clicked
   board.addEventListener("click", clueClicked)
 }
 
+  //parse json from fetch call
   function parseJSON(response) {
     return response.json()
   }
 
+  //make arrays of clues and categories
   function getCluesAndCategory(category){
     let someClues = []
     clueArray = []
@@ -67,6 +73,7 @@ const gameInit = () => {
     return clueArray
   }
 
+  //put board together 
   function buildBoard() {
     let column = document.createElement('div')
     column.className = 'column'
@@ -90,6 +97,7 @@ const gameInit = () => {
     scoreDiv.append(putScore)
   }
 
+  //deal with a clicked clue event
   function clueClicked(event){
     let clickedClueId = event.target.id 
     clickedClue = allClues[clickedClueId - 1]
@@ -100,6 +108,7 @@ const gameInit = () => {
     }
   }
 
+  //display modal with question
   function putQuestion() {
     modal.style.display = "block"
     displayQuestion = document.createElement('p')
@@ -115,6 +124,7 @@ const gameInit = () => {
     submitButton.addEventListener('submit', submitAnswer)
   }
 
+  //deal with a submitted answer
   function submitAnswer(event){
     event.preventDefault()
     modalQuestion.style.display = "none"
@@ -122,7 +132,7 @@ const gameInit = () => {
     let userAnswer = cleanAnswer(answerInput.value)
     let correctAnswer = cleanAnswer(clickedClue.answer)
     
-    if (correctAnswer.includes(userAnswer) || userAnswer.includes(correctAnswer)) {
+    if ((correctAnswer.includes(userAnswer) && userAnswer.length > 0) || userAnswer.includes(correctAnswer)) {
       let displayAnswer = clickedClue.answer
       let rightString = document.createElement('p')
       rightString.className = 'right-string'
