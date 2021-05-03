@@ -78,7 +78,7 @@ We built Jeopard(ish)! as our Mod 2 full-stack web app project. Being d̶e̶v̶s
 
 
 ## Contact
-CompuTender was created by [Chris Follen](https://www.linkedin.com/in/chrisfollen/), [Nick Gray](https://www.linkedin.com/in/nick-gray-06/)
+Jeopard(ish)! was created by [Chris Follen](https://www.linkedin.com/in/chrisfollen/), [Nick Gray](https://www.linkedin.com/in/nick-gray-06/)
 
 Feel free to reach out!
 
